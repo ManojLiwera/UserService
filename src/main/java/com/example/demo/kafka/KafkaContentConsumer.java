@@ -23,15 +23,13 @@ public class KafkaContentConsumer {
     Map<String, Object> consumerConfig = new HashMap<>() {
         {
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_BOOTSTRAP_SERVER);
-            put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class);
-            put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,CustomDeserializer.class);
             put(ConsumerConfig.GROUP_ID_CONFIG, "groupId");
             put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         }};
 
     public void start() {
         DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory =
-                new DefaultKafkaConsumerFactory<String, String>(consumerConfig);
+                new DefaultKafkaConsumerFactory<String, String>(consumerConfig, new StringDeserializer(), new CustomDeserializer());
 
         ContainerProperties containerProperties = new ContainerProperties(KAFKA_ARTICLE_TOPIC);
         containerProperties.setMessageListener(

@@ -7,11 +7,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 
-
+@ToString(includeFieldNames = true)
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class Article implements Serializable {
 
     private String articleId;
