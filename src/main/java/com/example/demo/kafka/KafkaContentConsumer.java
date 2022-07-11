@@ -18,7 +18,8 @@ import static com.example.demo.utils.Constants.KAFKA_BOOTSTRAP_SERVER;
 
 @Log4j2
 public class KafkaContentConsumer {
-//    private final DBConnector dbConnector = new DBConnector();
+
+//    @Autowired private ArticleRepository articleRepository;
 
     Map<String, Object> consumerConfig = new HashMap<>() {
         {
@@ -26,6 +27,7 @@ public class KafkaContentConsumer {
             put(ConsumerConfig.GROUP_ID_CONFIG, "groupId");
             put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         }};
+
 
     public void start() {
         DefaultKafkaConsumerFactory<String, String> kafkaConsumerFactory =
@@ -38,7 +40,7 @@ public class KafkaContentConsumer {
                     Article article = record.value();
 //                    article.setKafkaOffset(record.offset());
                     article.setRecordTimeStamp(Timestamp.from(Instant.now()));
-//                    dbConnector.add(article);
+                    saveArticle(article);
                 });
 
         ConcurrentMessageListenerContainer container =
@@ -49,5 +51,12 @@ public class KafkaContentConsumer {
         log.info("Starting user service consumer...");
         container.start();
         log.info("Waiting for incoming content updates...");
+    }
+
+
+    public void saveArticle(Article article){
+//        articleRepository.save(article);
+        log.info("Article Persisted in DB...");
+
     }
 }
