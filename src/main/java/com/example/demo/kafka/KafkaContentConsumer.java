@@ -1,5 +1,6 @@
 package com.example.demo.kafka;
 
+import com.example.demo.db.DBConnection;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -8,6 +9,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.MessageListener;
 
+import java.sql.DriverManager;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ import static com.example.demo.utils.Constants.KAFKA_BOOTSTRAP_SERVER;
 public class KafkaContentConsumer {
 
 //    @Autowired private ArticleRepository articleRepository;
+
+        DBConnection dbconn = new DBConnection();
 
     Map<String, Object> consumerConfig = new HashMap<>() {
         {
@@ -40,7 +44,9 @@ public class KafkaContentConsumer {
                     Article article = record.value();
 //                    article.setKafkaOffset(record.offset());
                     article.setRecordTimeStamp(Timestamp.from(Instant.now()));
-                    saveArticle(article);
+                    if(dbconn.AddToDataBase(article)){
+                        log.info("Database Updated");
+                    }
                 });
 
         ConcurrentMessageListenerContainer container =
@@ -56,6 +62,7 @@ public class KafkaContentConsumer {
 
     public void saveArticle(Article article){
 //        articleRepository.save(article);
+//        dbconn.AddToDataBase();
         log.info("Article Persisted in DB...");
 
     }
